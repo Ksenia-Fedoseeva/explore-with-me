@@ -22,9 +22,11 @@ services:
     ports:
       - "5432:5432"
 
-#  ewm-service:
-#    ports:
-#      - "8080:8080"
-#
-#  ewm-db:
-#    image: postgres:16.1
+  main-service:
+    build: ./main-service
+    container_name: main-service
+    ports:
+        - "8080:8080"
+
+  ewm-db:
+     image: postgres:16.1
