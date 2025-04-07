@@ -1,9 +1,12 @@
 package ru.practicum.ewm;
 
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import ru.practicum.ewm.dto.EndpointHit;
 import ru.practicum.ewm.dto.ViewStats;
@@ -11,15 +14,16 @@ import ru.practicum.ewm.dto.ViewStats;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+@Component
 public class StatsClient {
 
     private final RestTemplate restTemplate;
     private final String url;
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-    public StatsClient(String serverUrl) {
-        this.restTemplate = new RestTemplate();
-        this.url = serverUrl;
+    public StatsClient(RestTemplate restTemplate, @Value("${stats-client.url}") String url) {
+        this.restTemplate = restTemplate;
+        this.url = url;
     }
 
     public void hit(EndpointHit hit) {
