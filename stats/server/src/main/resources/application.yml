@@ -1,0 +1,13 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://stats-db:5432/stats
+    username: stats
+    password: stats
+  jpa:
+    hibernate:
+        ddl-auto: update
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+
+server:
+  port: 9090
