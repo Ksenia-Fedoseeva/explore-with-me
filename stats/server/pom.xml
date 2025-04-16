@@ -55,7 +55,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>ru.practicum.ewm.ExploreWithMeStatsApp</mainClass>
+                            <mainClass>ru.practicum.ewm.EwmStatsApp</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

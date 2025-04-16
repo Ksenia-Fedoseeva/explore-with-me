@@ -4,8 +4,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class ExploreWithMeStatsApp {
+public class EwmStatsApp {
     public static void main(String[] args) {
-        SpringApplication.run(ExploreWithMeStatsApp.class, args);
+        SpringApplication.run(EwmStatsApp.class, args);
     }
 }

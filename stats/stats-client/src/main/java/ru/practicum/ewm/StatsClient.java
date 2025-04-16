@@ -11,6 +11,7 @@ import org.springframework.web.client.RestTemplate;
 import ru.practicum.ewm.dto.EndpointHit;
 import ru.practicum.ewm.dto.ViewStats;
 
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -47,5 +48,13 @@ public class StatsClient {
 
         ResponseEntity<ViewStats[]> response = restTemplate.getForEntity(uriBuilder.toString(), ViewStats[].class);
         return List.of(response.getBody());
+    }
+
+    public long getUniqueViews(String uri) {
+        String start = "2000-01-01 00:00:00";
+        String end = LocalDateTime.now().format(formatter);
+        List<ViewStats> stats = getStats(start, end, List.of(uri), true);
+
+        return stats.isEmpty() ? 0 : stats.get(0).getHits();
     }
 }
