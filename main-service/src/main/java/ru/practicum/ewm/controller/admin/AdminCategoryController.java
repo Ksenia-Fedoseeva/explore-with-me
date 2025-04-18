@@ -6,30 +6,30 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.dto.category.CategoryDto;
 import ru.practicum.ewm.dto.category.NewCategoryDto;
-import ru.practicum.ewm.service.admin.category.AdminCategoryService;
+import ru.practicum.ewm.service.category.CategoryService;
 
 @RestController
 @RequestMapping("/admin/categories")
 @RequiredArgsConstructor
 public class AdminCategoryController {
 
-    private final AdminCategoryService adminCategoryService;
+    private final CategoryService categoryService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public CategoryDto addCategory(@Valid @RequestBody NewCategoryDto dto) {
-        return adminCategoryService.addCategory(dto);
+        return categoryService.addCategory(dto);
     }
 
     @PatchMapping("/{catId}")
     public CategoryDto updateCategory(@PathVariable Long catId,
                                       @RequestBody @Valid CategoryDto dto) {
-        return adminCategoryService.updateCategory(catId, dto);
+        return categoryService.updateCategory(catId, dto);
     }
 
     @DeleteMapping("/{catId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteCategory(@PathVariable Long catId) {
-        adminCategoryService.deleteCategory(catId);
+        categoryService.deleteCategory(catId);
     }
 }

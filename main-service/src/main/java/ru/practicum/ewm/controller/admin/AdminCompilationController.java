@@ -7,30 +7,30 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.dto.compilation.CompilationDto;
 import ru.practicum.ewm.dto.compilation.NewCompilationDto;
 import ru.practicum.ewm.dto.compilation.UpdateCompilationRequest;
-import ru.practicum.ewm.service.admin.compilation.AdminCompilationService;
+import ru.practicum.ewm.service.compilation.CompilationService;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/admin/compilations")
 public class AdminCompilationController {
 
-    private final AdminCompilationService service;
+    private final CompilationService compilationService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public CompilationDto createCompilation(@RequestBody @Valid NewCompilationDto dto) {
-        return service.createCompilation(dto);
+        return compilationService.createCompilation(dto);
     }
 
     @PatchMapping("/{compId}")
     public CompilationDto updateCompilation(@PathVariable Long compId,
                                             @RequestBody @Valid UpdateCompilationRequest dto) {
-        return service.updateCompilation(compId, dto);
+        return compilationService.updateCompilation(compId, dto);
     }
 
     @DeleteMapping("/{compId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteCompilation(@PathVariable Long compId) {
-        service.deleteCompilation(compId);
+        compilationService.deleteCompilation(compId);
     }
 }

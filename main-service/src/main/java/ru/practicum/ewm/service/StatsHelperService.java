@@ -3,15 +3,16 @@ package ru.practicum.ewm.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.practicum.ewm.StatsClient;
+import ru.practicum.ewm.dto.StatsQueryParams;
 import ru.practicum.ewm.dto.ViewStats;
 import ru.practicum.ewm.model.Event;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -20,47 +21,69 @@ public class StatsHelperService {
     private final StatsClient statsClient;
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-    public long getViews(Long eventId) {
-        return getViews(List.of(eventId)).getOrDefault(eventId, 0L);
-    }
-
-    public Map<Long, Long> getViews(List<Long> eventIds) {
-        if (eventIds == null || eventIds.isEmpty()) {
-            return Collections.emptyMap();
+    public long getViews(Long eventId, LocalDateTime publishedOn) {
+        if (publishedOn == null) {
+            return 0L;
         }
 
-        List<String> uris = eventIds.stream()
-                .map(id -> "/events/" + id)
-                .toList();
-
-        List<ViewStats> stats = statsClient.getStats(
-                LocalDateTime.now().minusYears(10).format(FORMATTER),
-                LocalDateTime.now().plusYears(10).format(FORMATTER),
-                uris,
+        StatsQueryParams params = new StatsQueryParams(
+                publishedOn.format(FORMATTER),
+                LocalDateTime.now().format(FORMATTER),
+                List.of("/events/" + eventId),
                 false
         );
 
-        return stats.stream().collect(Collectors.toMap(
-                s -> Long.parseLong(s.getUri().replace("/events/", "")),
-                ViewStats::getHits
-        ));
+        List<ViewStats> stats = statsClient.getStats(params);
+
+        return stats.isEmpty() ? 0L : stats.get(0).getHits();
     }
 
-    public long getViews(String uri) {
-        List<ViewStats> stats = statsClient.getStats(
-                LocalDateTime.of(2000, 1, 1, 0, 0).format(FORMATTER),
+    public long getViews(String uri, LocalDateTime publishedOn) {
+        if (publishedOn == null) {
+            return 0L;
+        }
+
+        StatsQueryParams params = new StatsQueryParams(
+                publishedOn.format(FORMATTER),
                 LocalDateTime.now().format(FORMATTER),
                 List.of(uri),
                 false
         );
 
+        List<ViewStats> stats = statsClient.getStats(params);
+
         return stats.isEmpty() ? 0L : stats.get(0).getHits();
     }
 
     public Map<Long, Long> getViewsByEvents(List<Event> events) {
-        List<Long> ids = events.stream()
-                .map(Event::getId)
-                .toList();
-        return getViews(ids);
+        if (events == null || events.isEmpty()) {
+            return Collections.emptyMap();
+        }
+
+        Map<Long, Long> result = new HashMap<>();
+
+        for (Event e : events) {
+            Long eventId = e.getId();
+            LocalDateTime published = e.getPublishedOn();
+
+            if (published == null) {
+                result.put(eventId, 0L);
+                continue;
+            }
+
+            StatsQueryParams params = new StatsQueryParams(
+                    published.format(FORMATTER),
+                    LocalDateTime.now().format(FORMATTER),
+                    List.of("/events/" + eventId),
+                    false
+            );
+
+            List<ViewStats> stats = statsClient.getStats(params);
+
+            Long views = stats.isEmpty() ? 0L : stats.get(0).getHits();
+            result.put(eventId, views);
+        }
+
+        return result;
     }
 }

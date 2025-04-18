@@ -1,5 +1,6 @@
 stats-client:
   url: http://localhost:9090
+  app-name: ewm-main-service
 
 spring:
   datasource:
@@ -10,5 +11,5 @@ spring:
     hibernate:
       ddl-auto: update
 
-  server:
+server:
     port: 8080

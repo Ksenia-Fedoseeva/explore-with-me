@@ -1,4 +1,4 @@
-package ru.practicum.ewm.service.prvt.participation;
+package ru.practicum.ewm.service.request;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

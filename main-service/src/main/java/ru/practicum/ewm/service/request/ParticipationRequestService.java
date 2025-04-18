@@ -1,4 +1,4 @@
-package ru.practicum.ewm.service.prvt.participation;
+package ru.practicum.ewm.service.request;
 
 import ru.practicum.ewm.dto.request.EventRequestStatusUpdateRequest;
 import ru.practicum.ewm.dto.request.EventRequestStatusUpdateResult;

@@ -1,11 +1,11 @@
-package ru.practicum.ewm.service.admin.user;
+package ru.practicum.ewm.service.user;
 
 import ru.practicum.ewm.dto.user.NewUserRequest;
 import ru.practicum.ewm.dto.user.UserDto;
 
 import java.util.List;
 
-public interface AdminUserService {
+public interface UserService {
     UserDto createUser(NewUserRequest request);
 
     void deleteUser(Long userId);

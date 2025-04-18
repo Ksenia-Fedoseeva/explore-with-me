@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.dto.request.ParticipationRequestDto;
-import ru.practicum.ewm.service.prvt.participation.ParticipationRequestService;
+import ru.practicum.ewm.service.request.ParticipationRequestService;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package ru.practicum.ewm.service.admin.user;
+package ru.practicum.ewm.service.user;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class AdminUserServiceImpl implements AdminUserService {
+public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
 
@@ -41,7 +41,7 @@ public class AdminUserServiceImpl implements AdminUserService {
         Pageable pageable = PageRequest.of(from / size, size, Sort.by("id"));
 
         Page<User> users = (ids == null || ids.isEmpty())
-                ? userRepository.findAllUsersWithOffset(pageable)
+                ? userRepository.findAll(pageable)
                 : userRepository.findAllByIdIn(ids, pageable);
 
         return users.stream()

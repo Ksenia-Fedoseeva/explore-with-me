@@ -3,7 +3,7 @@ package ru.practicum.ewm.controller.pub;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.dto.category.CategoryDto;
-import ru.practicum.ewm.service.pub.category.PublicCategoryService;
+import ru.practicum.ewm.service.category.CategoryService;
 
 import java.util.List;
 
@@ -12,17 +12,17 @@ import java.util.List;
 @RequestMapping("/categories")
 public class PublicCategoryController {
 
-    private final PublicCategoryService publicCategoryService;
+    private final CategoryService categoryService;
 
     @GetMapping
     public List<CategoryDto> getCategories(
             @RequestParam(defaultValue = "0") int from,
             @RequestParam(defaultValue = "10") int size) {
-        return publicCategoryService.getCategories(from, size);
+        return categoryService.getCategories(from, size);
     }
 
     @GetMapping("/{catId}")
     public CategoryDto getCategoryById(@PathVariable Long catId) {
-        return publicCategoryService.getCategoryById(catId);
+        return categoryService.getCategoryById(catId);
     }
 }
