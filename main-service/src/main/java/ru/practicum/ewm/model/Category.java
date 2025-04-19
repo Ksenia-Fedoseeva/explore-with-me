@@ -3,21 +3,14 @@ package ru.practicum.ewm.model;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.time.LocalDateTime;
-
 @Data
 @Entity
-@Table(name = "hits")
-public class Hit {
+@Table(name = "categories")
+public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String app;
-
-    private String uri;
-
-    private String ip;
-
-    private LocalDateTime timestamp;
+    @Column(length = 50, nullable = false, unique = true)
+    private String name;
 }

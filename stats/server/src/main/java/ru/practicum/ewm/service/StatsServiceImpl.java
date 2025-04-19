@@ -28,12 +28,18 @@ public class StatsServiceImpl implements StatsService {
 
     @Override
     public List<ViewStats> getStats(LocalDateTime start, LocalDateTime end, List<String> uris, Boolean unique) {
-        boolean isUnique = (unique != null) ? unique : false;
-
-        if (isUnique) {
-            return repository.findStatsUnique(start, end, uris);
-        } else {
-            return repository.findStatsAll(start, end, uris);
+        if (start == null || end == null) {
+            throw new IllegalArgumentException("Необходимо указать дату начала и окончания");
         }
+
+        if (start.isAfter(end)) {
+            throw new IllegalArgumentException("Дата начала не может быть после даты окончания");
+        }
+
+        Boolean isUnique = Boolean.TRUE.equals(unique);
+
+        return isUnique
+                ? repository.findStatsUnique(start, end, uris)
+                : repository.findStatsAll(start, end, uris);
     }
 }
