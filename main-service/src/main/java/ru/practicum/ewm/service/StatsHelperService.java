@@ -10,9 +10,9 @@ import ru.practicum.ewm.model.Event;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -60,29 +60,34 @@ public class StatsHelperService {
             return Collections.emptyMap();
         }
 
-        Map<Long, Long> result = new HashMap<>();
+        Map<Long, LocalDateTime> idToPublished = events.stream()
+                .filter(e -> e.getPublishedOn() != null)
+                .collect(Collectors.toMap(Event::getId, Event::getPublishedOn));
 
-        for (Event e : events) {
-            Long eventId = e.getId();
-            LocalDateTime published = e.getPublishedOn();
-
-            if (published == null) {
-                result.put(eventId, 0L);
-                continue;
-            }
-
-            StatsQueryParams params = new StatsQueryParams(
-                    published.format(FORMATTER),
-                    LocalDateTime.now().format(FORMATTER),
-                    List.of("/events/" + eventId),
-                    false
-            );
-
-            List<ViewStats> stats = statsClient.getStats(params);
-
-            Long views = stats.isEmpty() ? 0L : stats.get(0).getHits();
-            result.put(eventId, views);
+        if (idToPublished.isEmpty()) {
+            return events.stream().collect(Collectors.toMap(Event::getId, e -> 0L));
         }
+
+        List<String> uris = idToPublished.keySet().stream()
+                .map(id -> "/events/" + id)
+                .toList();
+
+        LocalDateTime start = Collections.min(idToPublished.values());
+
+        StatsQueryParams params = new StatsQueryParams(
+                start.format(FORMATTER),
+                LocalDateTime.now().format(FORMATTER),
+                uris,
+                false
+        );
+
+        Map<Long, Long> result = statsClient.getStats(params).stream()
+                .collect(Collectors.toMap(
+                        stat -> Long.parseLong(stat.getUri().replace("/events/", "")),
+                        ViewStats::getHits
+                ));
+
+        idToPublished.keySet().forEach(id -> result.putIfAbsent(id, 0L));
 
         return result;
     }
