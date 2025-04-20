@@ -4,59 +4,74 @@ import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.LocalDateTime;
-import java.util.Map;
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class ErrorHandler {
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<Object> handleAll(Exception ex) {
-        return new ResponseEntity<>(
-                Map.of(
-                        "status", HttpStatus.INTERNAL_SERVER_ERROR,
-                        "reason", "Unexpected error",
-                        "message", ex.getMessage(),
-                        "timestamp", LocalDateTime.now()
-                ),
-                HttpStatus.INTERNAL_SERVER_ERROR
-        );
-    }
-
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Object> handleValidation(MethodArgumentNotValidException ex) {
-        String message = ex.getBindingResult().getFieldErrors().stream()
+    public ResponseEntity<ApiError> handleValidation(MethodArgumentNotValidException ex) {
+        List<String> errors = ex.getBindingResult().getFieldErrors().stream()
                 .map(e -> e.getField() + ": " + e.getDefaultMessage())
-                .collect(Collectors.joining(", "));
+                .collect(Collectors.toList());
 
-        return new ResponseEntity<>(
-                Map.of(
-                        "status", HttpStatus.BAD_REQUEST,
-                        "reason", "Validation error",
-                        "message", message,
-                        "timestamp", LocalDateTime.now()
-                ),
-                HttpStatus.BAD_REQUEST
-        );
+        ApiError error = ApiError.builder()
+                .status(HttpStatus.BAD_REQUEST.name())
+                .reason("Ошибка валидации")
+                .message("Поля запроса не прошли проверку")
+                .errors(errors)
+                .timestamp(LocalDateTime.now())
+                .build();
+
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<Object> handleConstraintViolation(ConstraintViolationException ex) {
-        String message = ex.getConstraintViolations().stream()
-                .map(violation -> violation.getPropertyPath() + ": " + violation.getMessage())
-                .collect(Collectors.joining(", "));
+    public ResponseEntity<ApiError> handleConstraintViolation(ConstraintViolationException ex) {
+        List<String> errors = ex.getConstraintViolations().stream()
+                .map(v -> v.getPropertyPath() + ": " + v.getMessage())
+                .collect(Collectors.toList());
 
-        return new ResponseEntity<>(
-                Map.of(
-                        "status", HttpStatus.BAD_REQUEST,
-                        "reason", "Validation error",
-                        "message", message,
-                        "timestamp", LocalDateTime.now()
-                ),
-                HttpStatus.BAD_REQUEST
-        );
+        ApiError error = ApiError.builder()
+                .status(HttpStatus.BAD_REQUEST.name())
+                .reason("Ошибка ограничения")
+                .message("Некорректные параметры запроса")
+                .errors(errors)
+                .timestamp(LocalDateTime.now())
+                .build();
+
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ApiError> handleIllegalArgument(IllegalArgumentException ex) {
+        ApiError error = ApiError.builder()
+                .status(HttpStatus.BAD_REQUEST.name())
+                .reason("Неверно составлен запрос")
+                .message(ex.getMessage())
+                .errors(Collections.emptyList())
+                .timestamp(LocalDateTime.now())
+                .build();
+
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ApiError> handleAll(Exception ex) {
+        ApiError error = ApiError.builder()
+                .status(HttpStatus.INTERNAL_SERVER_ERROR.name())
+                .reason("Неожиданная ошибка")
+                .message(ex.getMessage())
+                .errors(Collections.emptyList())
+                .timestamp(LocalDateTime.now())
+                .build();
+
+        return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
