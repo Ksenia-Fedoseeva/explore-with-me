@@ -1,3 +1,6 @@
 # java-explore-with-me
 Repository for ExploreWithMe project.
-https://github.com/Ksenia-Fedoseeva/explore-with-me/pull/3
+
+## 🔗 Ссылка на Pull Request
+
+➡️ **[Посмотреть Pull Request №3](https://github.com/Ksenia-Fedoseeva/explore-with-me/pull/3)**
