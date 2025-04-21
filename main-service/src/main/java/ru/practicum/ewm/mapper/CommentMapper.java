@@ -10,6 +10,7 @@ import ru.practicum.ewm.model.enums.CommentStatus;
 import java.time.LocalDateTime;
 
 public class CommentMapper {
+
     public static CommentDto toDto(Comment comment) {
         return CommentDto.builder()
                 .id(comment.getId())
