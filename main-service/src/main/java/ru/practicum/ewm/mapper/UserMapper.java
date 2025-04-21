@@ -13,7 +13,7 @@ public class UserMapper {
         return dto;
     }
 
-    public static User toUser(NewUserRequest request) {
+    public static User toEntity(NewUserRequest request) {
         User user = new User();
         user.setEmail(request.getEmail());
         user.setName(request.getName());

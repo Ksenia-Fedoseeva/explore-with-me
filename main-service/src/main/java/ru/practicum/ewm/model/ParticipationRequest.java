@@ -1,7 +1,10 @@
 package ru.practicum.ewm.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import ru.practicum.ewm.model.enums.RequestStatus;
 
 import java.time.LocalDateTime;
@@ -9,6 +12,9 @@ import java.time.LocalDateTime;
 @Data
 @Entity
 @Table(name = "participation_requests")
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class ParticipationRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

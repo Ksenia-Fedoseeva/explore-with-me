@@ -60,17 +60,17 @@ public class EventMapper {
     }
 
     public static Event toEntity(NewEventDto dto, User initiator, Category category) {
-        Event event = new Event();
-        event.setAnnotation(dto.getAnnotation());
-        event.setCategory(category);
-        event.setDescription(dto.getDescription());
-        event.setEventDate(dto.getEventDate());
-        event.setLocation(dto.getLocation());
-        event.setPaid(dto.getPaid());
-        event.setParticipantLimit(dto.getParticipantLimit());
-        event.setRequestModeration(dto.getRequestModeration());
-        event.setTitle(dto.getTitle());
-        event.setInitiator(initiator);
-        return event;
+        return Event.builder()
+                .annotation(dto.getAnnotation())
+                .category(category)
+                .description(dto.getDescription())
+                .eventDate(dto.getEventDate())
+                .location(dto.getLocation())
+                .paid(dto.getPaid())
+                .participantLimit(dto.getParticipantLimit())
+                .requestModeration(dto.getRequestModeration())
+                .title(dto.getTitle())
+                .initiator(initiator)
+                .build();
     }
 }
