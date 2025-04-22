@@ -20,11 +20,11 @@ public class ParticipationRequestMapper {
     }
 
     public static ParticipationRequest toEntity(Event event, User user, RequestStatus status) {
-        ParticipationRequest request = new ParticipationRequest();
-        request.setEvent(event);
-        request.setRequester(user);
-        request.setCreated(LocalDateTime.now());
-        request.setStatus(status);
-        return request;
+        return ParticipationRequest.builder()
+                .event(event)
+                .requester(user)
+                .created(LocalDateTime.now())
+                .status(status)
+                .build();
     }
 }
